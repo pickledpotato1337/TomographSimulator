@@ -67,7 +67,7 @@ class ImageGrid:
                 j -= 1
             if (len(lineRes) > 0):
                 aux = sum(lineRes)
-                neRes.append(aux)
+                neRes.append(self.intensity-aux)
             else:
                 neRes.append(0);
 
@@ -81,7 +81,7 @@ class ImageGrid:
             aux=0
             for j in range(self.dimension):
                 aux += self.AbsorptionFormula(self.imageArray[i,j])
-            nRes.append(aux)
+            nRes.append(self.intensity-aux)
 
         return nRes
 
@@ -96,7 +96,7 @@ class ImageGrid:
                 j+=1
             if(len(lineRes)>0):
                 aux=sum(lineRes)
-                nwRes.append(aux)
+                nwRes.append(self.intensity-aux)
             else:
                 nwRes.append(0);
 
@@ -108,7 +108,7 @@ class ImageGrid:
             aux=0
             for j in range(self.dimension):
                 aux+=self.AbsorptionFormula(self.imageArray[i,j])
-            wRes.append(aux)
+            wRes.append(self.intensity-aux)
 
         return wRes
 

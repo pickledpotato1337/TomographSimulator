@@ -78,6 +78,7 @@ class ImageGrid:
         Numpy.transpose(flipped)
         nRes = []
         for i in range(self.dimension):
+            aux=0
             for j in range(self.dimension):
                 aux += self.AbsorptionFormula(self.imageArray[i,j])
             nRes.append(aux)

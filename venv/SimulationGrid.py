@@ -156,6 +156,7 @@ class ImageGrid:
 
         return self.intensity*multiplier
 
-    def GetNextOnBeam(self, Xcoordinate, Ycoordinate, heightToEmitter):
-        return
+    def BeamFormula(self, xStart, yStart, heightToEmitter, tangent, xCoordinate, yCoordinate):
+        return 1
+        return 0
 

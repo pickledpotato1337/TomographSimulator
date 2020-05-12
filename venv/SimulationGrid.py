@@ -183,7 +183,7 @@ class ImageGrid:
         for i in range(self.dimension):
             for h in range(i):
                 for k in range(self.dimension // 2):
-                    if (self.BeamFormula(i, 0, distanceToObject, self.dimension / 2, k, h) == 1):
+                    if (self.BeamFormula(i, 0, distanceToObject, self.dimension/ 2, k, h) == 1):
                         wbRes.append(self.AbsorptionFormula(self.imageArray[h, k]))
         for j in range(self.dimension):
             for m in range(j):
@@ -226,11 +226,11 @@ class ImageGrid:
 
     def BeamFormula(self, xStart, yStart, yEmitter, xEmitter, xCoordinate, yCoordinate):
         yEmitter*=-1
-
-        parameter=(yStart-yEmitter)/(xStart-xEmitter)
-        addition=xStart*parameter+yStart
-        if(xCoordinate*parameter+addition-yCoordinate<1.5):
-            return 1
+        if(xStart!=xEmitter):
+            parameter=(yStart-yEmitter)/(xStart-xEmitter)
+            addition=xStart*parameter+yStart
+            if(xCoordinate*parameter+addition-yCoordinate<1.5):
+                return 1
         return 0
 
 

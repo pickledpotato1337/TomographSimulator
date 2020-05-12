@@ -6,3 +6,4 @@ img1.FillPhantomTest()
 
 img1.ScanLinear()
 
+img1.ScanBeam(21)

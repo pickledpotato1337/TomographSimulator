@@ -49,8 +49,13 @@ class ImageGrid:
         #done
         return
     def ScanBeam(self, distanceToObject):
-        tangent=2*distanceToObject/self.dimension
-
+        wB=self.Wb(distanceToObject)
+        nwB=self.NWb(distanceToObject)
+        nB=self.Nb(distanceToObject)
+        neB=self.NEb(distanceToObject)
+        self.imageScan=[wB, nwB, nB, neB]
+        imageScanArray = Numpy.array(self.imageScan)
+        Numpy.savetxt("image.csv", imageScanArray, delimiter="  ")
         return
 
     def NE(self):
@@ -114,24 +119,87 @@ class ImageGrid:
 
     #For beam scan
 
-    def NEb(self):
-        return
-    def Nb(self):
+    def NEb(self, distanceToObject):
+        nebRes=[]
+        radius=distanceToObject+(self.dimension/2)
+        xSource=radius*0.7071+(self.dimension/2)
         for i in range(self.dimension):
-            westEdge=self.imageArray[i,0]
-            duplicate=i
-            j=0
-            #while((i>0)&(j>=0)):
-        return
+            for h in range(i):
+                for k in range(self.dimension):
+                    if (self.BeamFormula(0, i, xSource, xSource, k, h) == 1):
+                        nebRes.append(self.AbsorptionFormula(self.imageArray[h, k]))
+        for j in range(self.dimension):
+            for m in range(j):
+                for n in range(self.dimension):
+                    if (self.BeamFormula(j, 0, xSource, xSource, n, m) == 1):
+                        nebRes.append(self.AbsorptionFormula(self.imageArray[m, n]))
 
-        return
-    def NWb(self):
-        return
-    def Wb(self):
-        return
+
+
+        return nebRes
+
+    def Nb(self, distanceToObject):
+        nbRes=[]
+        for i in range(self.dimension):
+             for h in range(i):
+                for k in range(self.dimension//2):
+                    if(self.BeamFormula(0,i, distanceToObject, self.dimension/2, k,h)==1):
+                        nbRes.append(self.AbsorptionFormula(self.imageArray[h, k]))
+        for j in range(self.dimension):
+            for m in range(j):
+                for n in range(self.dimension //2):
+                    if (self.BeamFormula(j, 0, distanceToObject, self.dimension / 2, n, m) == 1):
+                        nbRes.append(self.AbsorptionFormula(self.imageArray[m, n]))
+
+        for l in range(self.dimension):
+            for o in range(l):
+                for p in range(self.dimension // 2):
+                    if (self.BeamFormula(self.dimension-1, l, distanceToObject, self.dimension / 2, p, o) == 1):
+                        nbRes.append(self.AbsorptionFormula(self.imageArray[o, p]))
+
+        return nbRes
+
+
+    def NWb(self, distanceToObject):
+        nwbRes=[]
+        radius = distanceToObject + (self.dimension / 2)
+        xSource = radius * (-1)*0.7071 + (self.dimension / 2)
+        ySource = radius  * 0.7071 + (self.dimension / 2)
+        for j in range(self.dimension):
+            for m in range(j):
+                for n in range(self.dimension):
+                    if (self.BeamFormula(j, 0, ySource, xSource, n, m) == 1):
+                        nbRes.append(self.AbsorptionFormula(self.imageArray[m, n]))
+        for l in range(self.dimension):
+            for o in range(l):
+                for p in range(self.dimension):
+                    if (self.BeamFormula(self.dimension - 1, l, ySource, xSource, p, o) == 1):
+                        nbRes.append(self.AbsorptionFormula(self.imageArray[o, p]))
+        return nwbRes
+
+
+    def Wb(self, distanceToObject):
+        wbRes=[]
+        for i in range(self.dimension):
+            for h in range(i):
+                for k in range(self.dimension // 2):
+                    if (self.BeamFormula(i, 0, distanceToObject, self.dimension / 2, k, h) == 1):
+                        wbRes.append(self.AbsorptionFormula(self.imageArray[h, k]))
+        for j in range(self.dimension):
+            for m in range(j):
+                for n in range(self.dimension // 2):
+                    if (self.BeamFormula(0, j, distanceToObject, self.dimension / 2, n, m) == 1):
+                        wbRes.append(self.AbsorptionFormula(self.imageArray[m, n]))
+
+        for l in range(self.dimension):
+            for o in range(l):
+                for p in range(self.dimension // 2):
+                    if (self.BeamFormula(l, self.dimension - 1, distanceToObject, self.dimension / 2, p, o) == 1):
+                        wbRes.append(self.AbsorptionFormula(self.imageArray[o, p]))
+        return wbRes
 
     def DeclareRectangle(self, startX, startY, heigth, width, value):
-        self.imageArray[startY:startY+heigth, startX:startX+heigth]=value
+        self.imageArray[startY:startY+heigth, startX:startX+width]=value
         return
 
     def DeclareCircle(self, centerX, centerY, radius, value):
@@ -156,7 +224,13 @@ class ImageGrid:
 
         return self.intensity*multiplier
 
-    def BeamFormula(self, xStart, yStart, heightToEmitter, tangent, xCoordinate, yCoordinate):
-        return 1
+    def BeamFormula(self, xStart, yStart, yEmitter, xEmitter, xCoordinate, yCoordinate):
+        yEmitter*=-1
+
+        parameter=(yStart-yEmitter)/(xStart-xEmitter)
+        addition=xStart*parameter+yStart
+        if(xCoordinate*parameter+addition-yCoordinate<1.5):
+            return 1
         return 0
+
 
